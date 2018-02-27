@@ -1,226 +1,141 @@
-#include "pre_proc.hpp"
+#include "pre_proc_definitions.hpp"
 
-int main(int argc, char ** argv)
+int main()
 {
-            std::cout.unsetf(std::ios::floatfield);
-            std::cout.precision(3);
-            std::cout.setf(std::ios::fixed, std::ios::floatfield);
+    srand(time(NULL));
+    int choice;
+    do
+    {
+        std::cout << "1 - generate keys" << std::endl;
+        std::cout << "2 - encrypt message" << std::endl;
+        std::cout << "0 - exit" << std::endl;
+        std::cin >> choice;
+        switch(choice)
+        {
+            case 1:
+            rsa_keys();
+            break;
 
-            int chr[lop][n*m],chp[lop][n*m], twr[lop];
-            float fp[lop], t[lpp], maximum, minimum, avg, stdDev, temp[lpp], suma_temp;
-            int bz, popCnt=0;
-            srand(time(NULL));
-
-            for (int i=0; i<lpp; i++){
-                zainicjuj_najlepszego_X_i_moze_cos_jeszcze_rbz();
-                gen_pierwsza_populacje(chr);
-                ocen_osobnikow_populacji(chr, fp);
-                do
-                {
-                    popCnt++;
-                    selekcja_osobnikow_na_rodzicow(fp, twr);
-                    krzyzujOsobniki(chr, twr, chp);
-                    mutacja(chp);
-                    sukcesja(chp, chr);
-                    ocen_osobnikow_populacji(chr, fp);
-                }while(bz>rbz);
-                t[i] = nfp;
-                }
-                zwroc_najlepszego();
-        // obliczyc - max, min, srednia, stddev dla t
-        //MAXIMUM
-        for (int i=0; i<lpp; i++){
-            if(maximum<t[i]){
-                maximum = t[i];
-            }
+            case 2:
+            RSAcipher_decipher();
+            break;
         }
-        cout << "Maksimum: " << maximum << endl;
-        //MINIMUM
-        minimum = maximum;
-        for (int i=0; i<lpp; i++){
-            if(minimum > t[i]){
-                minimum = t[i];
-            }
-        }
-        cout << "Minimum: " << minimum << endl;
-        //SREDNIA
-        for (int i=0; i<lpp; i++){
-            avg = avg + t[i];
-        }
-        avg = avg/lpp;
-        cout << "Srednia z t[i] = " << avg << endl;
+    }while(choice != 0);
 
-        //standard deviaion
-        for (int i=0; i<lpp; i++){
-            temp[i] = t[i] - avg;
-        }
-                for (int i=0; i<lpp; i++)
-                    temp[i] = potegowanie(temp[i], 2);
-
-                    suma_temp = 0;
-                    for (int i=0; i<lpp; i++)
-                        suma_temp = suma_temp + temp[i];
-
-                stdDev = sqrt(suma_temp/lpp);
-                cout << "Odch.std: " << stdDev << std::endl;
-
-        return(0);
-}
-// FUNCTIONS
-float ksi_fnct(){
-    return (float)rand()/RAND_MAX;
+    return (0);
 }
 
-float potegowanie(float x, float y){
-        float tmp = x;
-        for (int i=1; i<y; ++i)
-            tmp *= x;
-        return tmp;
+void w8(void){
+    char c[1];
+    std::cin.getline(c, 1);
+    std::cin.getline(c, 1);
+    for(int i=1; i<500; i++)
+        std::cout << std::endl;
 }
 
-float f(float x[n]){
-    	// x=17.30764054	f1=17.29320809	f2=34.58641619	f3=51.87962428
-        float s = 0;
-        for (int i=0; i<n; i++)
-            s = s + x[i] * sin(x[i]) * sin(x[i]);
-        return s;
-}
-
-void zainicjuj_najlepszego_X_i_moze_cos_jeszcze_rbz(void){
-    for (int i=0; i<n; i++)
-        nx[i] = xmin[i];
-    nfp = f(nx);
-    rbz = 0;
-}
-
-void gen_pierwsza_populacje(int chr[lop][n*m]){
-        for (int i=0; i<lop; i++){
-            for (int j=0; j<n*m; j++){
-                chr[i][j] = rand()%2;
-            }
-        }
-}
-
-void drukuj_1sza_pop(int chr[lop][n*m]){
-        for (int i=0; i<lop; i++){
-            for (int j =0; j<n*m; j++){
-                cout << chr[i][j];
-            }
-            cout << endl;
-        }
-}
-
-void ocen_osobnikow_populacji(int chr[lop][n*m], float fp[lop]){
-    int gp, gl;
-    float wd, p2;
-    float x[n];
-
-    int pnfp=nfp; //poprzednia najlepsza funkcja przystposowania na wejsciu to nfp
-
-    for (int j=0; j<lop; j++){
-        for (int i=0; i<n; i++){
-            p2 = 1;
-            wd = 0;
-            gp = (i+1) * m -1;
-            gl = i * m;
-            for (int k=gp; k>=gl; k--){
-                wd = wd + chr[j][k] * p2;
-                p2 = 2 * p2;
-            }
-            x[i] = xmin[i] + (xmax[1] - xmin[i]) * wd/(p2 -1);
-        }
-        fp[j] = f(x);
-        if (fp[j]>nfp){
-            nfp=fp[j]; //nfp - najlepsza funkcja przystosowania
-            for (int i=0; i<n; i++)
-                nx[i]= x[i];
-        }
+ULL biggestCommonDivisor(ULL a, ULL b){
+    ULL t;
+    while(b != 0){
+        t = b;
+        b = b % a;
+        a = t;
     }
-    if (pnfp==nfp)
-        rbz++; //rzeczywisyty licznik iteracji bez zmian
-    else
-        rbz = 0;
+    return a;
 }
 
-void selekcja_osobnikow_na_rodzicow(float fp[lop], int twr[lop]){
-        int i1, i2;
-        for (int i=0; i<lop; i++){
-            i1 = rand()%lop;
-            i2 = rand()%lop;
-        if (fp[i1]>fp[i2])
-            twr[i] = i1;
+ULL reverseModulus(ULL a, ULL n){
+    ULL a0, n0, p0, p1, q, r, t;
+    p0 = 0;
+    p1 = 1;
+    a0 = a;
+    n0 = n;
+    q = n0 / a0;
+    r = n0 % a0;
+
+    while(r > 0){
+        t = p0 - q * p1;
+        if(t >= 0)
+            t = t % n;
         else
-            twr[i] = i2;
-        }
-}
-
-void krzyzujOsobniki(int chr[lop][n*m], int twr[lop], int chp[lop][n*m]){
-        int i1, i2, l = lop, p1, p2, r1, r2, pc;
-        float xi = ksi_fnct();
-        for (int i=0; i<lop/2; i++){
-            i1 = rand()%1;
-            r1 = twr[i1];
-            twr[i1] = twr[l-1];
-            l--;
-            i2 = rand()%1;
-            r2 = twr[i2];
-            twr[i2] = twr[l-1];
-            l--;
-            p1 = 2 * i;
-            p2 = 2 * i + 1;
-
-            if (xi< pk){
-                pc = rand()%(n*m-1);
-                for (int k=0; k<=pc; k++){
-                    chp[p1][k]=chr[r1][k];
-                    chp[p2][k]=chr[r2][k];
-                }
-                for (int k=pc+1; k<n*m; k++){
-                    chp[p1][k] = chr[r2][k];
-                    chp[p2][k] = chr[r1][k];
-                }
-            }
-            else{
-                for (int k=0; k<=n*m; k++){
-                    chp[p1][k] = chr[r1][k];
-                    chp[p2][k] = chp[r2][k];
-                }
-            }
-        }
-}
-
-void drukuj_populacje_potomna(int chp[lop][n*m]){
-    for (int i=0; i<lop; i++){
-        for (int j=0; j<n*m; j++){
-                cout << chp[i][j];
-            }
-            cout << endl;
-        }
+            t = n - ((-t) % n);
+        p0 = p1;
+        p1 = t;
+        n0 = a0;
+        a0 = r;
+        q = n0 / a0;
+        r = n0 % a0;
     }
-
-void mutacja(int chp[lop][n*m]){
-        float xi = ksi_fnct();
-        for (int i=0; i<lop; i++){
-            for (int j=0; j<n*m; j++){
-                if(xi < pm){
-                    if(chp[i][j] == 1)
-                        chp[i][j] = 0;
-                    else
-                        chp[i][j] = 1;
-                }
-            }
-        }
-    }
-void sukcesja(int chp[lop][n*m], int chr[lop][n*m]){
-    for (int i=0; i<lop; i++){
-        for (int j=0; j<n*m; j++){
-            chr[i][j] = chp[i][j];
-        }
-    }
+    return p1;
 }
 
-void zwroc_najlepszego(void){
-    cout << nfp << endl;
-    for (int i=0; i<n; i++)
-        cout << nx[i] << " " << endl;
+void rsa_keys(){
+    const unsigned int smallPrimesArray[14] = {3, 5, 7, 11, 13, 17, 19, 21, 23, 29, 31, 39, 41, 51};
+    const ULL primes_array[115] =
+    {
+    121093699, 121093727, 121093747, 121093769, 121093811, 121093813,
+    121093823, 121093829, 121093853, 121093867, 121093883, 121093961,
+    121093993, 121094003, 121094021, 121094027, 121094041, 121094047,
+    121094059, 121094069, 121094093, 121094143, 121094161, 121094177,
+    121094189, 121094203, 121094243, 121094269, 121094273, 121094293,
+    121094327, 121094329, 121094341, 121094387, 121094399, 121094423,
+    121094431, 121094483, 121094503, 121094507, 121094549, 121094591,
+    121094647, 121094653, 121094681, 121094683, 121094693, 121094719,
+    121094741, 121094761, 121094767, 121094783, 121094797, 121094801,
+    121094803, 121094843, 121094863, 121094867, 121094887, 121094891,
+    121094899, 121094917, 121094921, 121094933, 121095011, 121095031,
+    121095041, 121095047, 121095067, 121095103, 121095119, 121095133,
+    121095157, 121095167, 121095173, 121095179, 121095203, 121095209,
+    121095239, 121095241, 121095287, 121095307, 121095313, 121095319,
+    121095323, 121095361, 121095409, 121095419, 121095421, 121095449,
+    121095463, 121095497, 121095523, 121095551, 121095563, 121095571,
+    121095581, 121095587, 121095593, 121095613, 121095649, 121095701,
+    121095707, 121095739, 121095757, 121095763, 121095769, 121095773,
+    121095781, 121095787, 121095847, 121095853, 121095899, 121095929,
+    121095973
+    };
+    ULL key_P, key_Q, phi,n,e,d;
+    key_P = primes_array[rand() % 115];
+    key_Q = primes_array[rand() % 115];
+    phi = (key_P - 1) * (key_Q - 1);
+    n = key_P * key_Q;     /// 10848072686786669520
+    for(e=primes_array[rand() % 13]; biggestCommonDivisor(e, phi) != 1; e+=2){
+        d = reverseModulus(e, phi);
+    }
+    std::cout << "Write the data that you'll see! For Public keys!" << std::endl;
+    std::cout << "Public key!" << std::endl;
+    std::cout << "e: " << e << std::endl;
+    std::cout << "n: " << n << std::endl;
+    std::cout << "Private key!" << std::endl;
+    std::cout << "d: " << d << std::endl;
+    w8();
 }
+
+ULL power_modulo(ULL a, ULL w, ULL n){
+        ULL pow, res, q;
+        pow = a;
+        res = 1;
+        for(q=w; q>0; q /=2){
+            if(q % 2)
+                res = (res * pow) % n;
+            pow = (pow * pow) % n;
+        }
+        return res;
+}
+
+void RSAcipher_decipher(){
+    ULL e, n ,t;
+    std::cout << "RSA cipher" << std::endl;
+    std::cout << "Enter e: ";
+    std::cin >> e;
+    std::cout << "Enter modulus: ";
+    std::cin >> n;
+    std::cout << "-------------------" << std::endl;
+    std::cout << "RSA code (t): " << std::endl;
+    std::cin >> t;
+    std::cout << power_modulo(t,e,n) << std::endl;
+    w8();
+}
+/**
+e: 176796025
+n: 14664029540542427
+*/
